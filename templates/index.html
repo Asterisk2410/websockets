@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-Time Translation</title>
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+</head>
+<body>
+    <h1>Real-Time Translation</h1>
+    <button id="start">Start Recording</button>
+    <button id="stop" disabled>Stop Recording</button>
+    <textarea id="result" placeholder="Translated text will appear here..."></textarea>
+
+    <script>
+        const socket = io.connect('http://' + document.domain + ':' + location.port);
+
+        let mediaRecorder;
+        let audioChunks = [];
+
+        document.getElementById('start').onclick = function() {
+            navigator.mediaDevices.getUserMedia({ audio: true })
+                .then(stream => {
+                    console.log('Recording audio...');
+                    mediaRecorder = new MediaRecorder(stream);
+                    mediaRecorder.start();
+
+                    mediaRecorder.ondataavailable = function(e) {
+                        audioChunks.push(e.data);
+                        if (mediaRecorder.state === 'inactive') {
+                            let blob = new Blob(audioChunks, { type: 'audio/webm' });
+                            blob.arrayBuffer().then(buffer => {
+                                let chunkSize = 1024;
+                                for (let i = 0; i < buffer.byteLength; i += chunkSize) {
+                                    let chunk = buffer.slice(i, i + chunkSize);
+                                    socket.emit('audio_data', chunk);
+                                }
+                            });
+                        }
+                    };
+
+                    document.getElementById('start').disabled = true;
+                    document.getElementById('stop').disabled = false;
+                });
+        };
+
+        document.getElementById('stop').onclick = function() {
+            mediaRecorder.stop();
+            document.getElementById('start').disabled = false;
+            document.getElementById('stop').disabled = true;
+        };
+
+        socket.on('translated_text', function(translatedText) {
+            document.getElementById('result').value = translatedText;  // Fixed variable name here
+        });
+
+        socket.on('error', function(error) {
+            alert(error.message);
+        });
+    </script>
+</body>
+</html>

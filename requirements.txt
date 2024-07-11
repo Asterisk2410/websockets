@@ -1,0 +1,6 @@
+pyshine
+sockets
+Flask
+gevent-websocket
+flask_sockets
+openai-whisper

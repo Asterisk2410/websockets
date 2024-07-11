@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "disco-stock-427806-b5",
+  "private_key_id": "1063a03c5b59eb2eff340c0173f1959d2ebe38c4",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC+CKQ4VfRurOmH\niYZRMWV0U0WWClvjL07I3EIc33BhhLMY66F+Jmr0rm5C7Lmnnj2AjfkfhckghZlN\nlflkLgzp3Bp0pc2+ovSeA+GYTy3A3RHGrIgPURb9zpnZb/H7v8rWpwk7ChF/biA0\noXNRRgMGNkIqTKpFnl0GI5YhoPvA6H7aHl+6eiEKg4tM22swIJKrarpZ8ouYH4QC\nbTmlWwMEUoeC9NAqLko8CRlTDYM4ch0ZWRXBKiMuLPcWMoo9gRl7KtIqK+0GDPKy\ntoDZviCYc51TyGh8Dfl2SNnOPwKZUm6M64BLfJpZxSobBLiEpLXbLVWQitH7ipv/\nb8J8x+13AgMBAAECggEAFNS9q69AbCFoOANLRfs0M9ws9JWOHQlCiaIbXS7hEs+J\nEmJCAaIUd13nmE56y3T9KOpnNJ1lvrrmYyrde63QnJIUFFVYiF00k125jQig61NQ\nb4baI1OwQYI0OzGaRQ5xHbaRvHcOE/nubdaE3ZPfIP8xoZFl2NvTNqkP+/+5mRuy\n7armRa3VCMHd8kKSgExB33YMp1uXVV7SC0wjlS6/M4U/k8NpWYmjroWzEJDpCMsy\nwL+rE2pSUGVwOIUZn3cEZ+NsUqm78beG/aNG3pw3UMBLidpgk+1zUnL3qRm5OFma\nif5zDJmkf6sho182qoAANjCWpxtbPvtCs9mf6fbJgQKBgQDhq9qVi58AaQPN3fKB\ngVAYVOteepQcyarD39wl5AJxFLmuLCmHu3ctc0jpytqCposwk4fCygLvyUWVhoER\naYjZWm2ql8k6DpAHfvYAmM3bTZ08Va6Fzd7a/YqXktxK8OCtcMdDTV+afJ/Kn+rr\nidKYnqBINXlpZpYi0b2seOKAswKBgQDXkrCMleht7+9AbAph4iwyFKWyoO2WruDQ\n4RBDB/ZY1uv7Oi4F1TygxP7YpSKyHN6Hv+Ml0DCwck+ymKBKe5Kf8/zcqh3Chec6\nRQ+XkBSMq34jDdrL70CJGCmobhSF+wQuc6ARRFw/Y7dJTFFRet5GoyaJYCC4CQjw\nX24actZ6LQKBgGIr/rUbvhnRlWQTb5HDDXLoTlQVgyVa3bzEP+MD48QJvhT1BUQU\n222cP1Xld1Vq2hZRt7eXZdumdWzszG0kufHEEv0pdtKYzzNTmfT8hGEozIQYyglP\nW+lsbsQtkUPQsg0BiM3QdQyhtmnRU8MPe9wE9bkz+hNOG3YeRCMpm29dAoGBAK+9\nO0Zw0zoElyQKr/AaRPNS174m6WmlCUvfnrU2oYLNOzXkuS4yJyndTvDotr9DP7ql\nGRVzgq3lkslDGbF+ygqyClsOKBKzvMxJDqv9XnNLPxpuqgcE9bSNyTAxBXQwLbl8\ns2pAM3/N19bea5CkPN6TFNB7WFEPtITZF1ZidizFAoGATJUTmoUyMtOO8NvrM8+y\n6ZgfAJo7bcgJ62HlrrqTSJS+2qM4DHCY+QVS+kMJFxNcsnDik4PtbEzfHb6C+dZj\n3AnbucuJLFZyanO0nA6mHHRh/mMyVMGzXxRjLdUAoX2tXU2UuIrit6Oh0RzwFuWE\ndIu3GZN+vP+Z6zaV+edEXF8=\n-----END PRIVATE KEY-----\n",
+  "client_email": "speech-to-text@disco-stock-427806-b5.iam.gserviceaccount.com",
+  "client_id": "114350249623853855997",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/speech-to-text%40disco-stock-427806-b5.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
