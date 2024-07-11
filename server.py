@@ -80,7 +80,7 @@
 # stream.close()
 # audio.terminate()
 
-########### Working AUDIO TRANSCRIPTION SERVER ###########
+########### Working AUDIO TRANSCRIPTION-TRANSLATION SERVER ###########
 
 import os
 import socket
