@@ -342,8 +342,9 @@ audio = pyaudio.PyAudio()
 client = speech.SpeechClient()
 
 # Initialize Google Translate client
-# translate = translator.Client()
-translate = deepl.Translator(deep_api_key)
+# translate = Translator()  ## googletrans
+# translate = translator.Client()  ## google-cloud-translate
+translate = deepl.Translator(deep_api_key)  ## deepl translate
 
 # Initialize VAD
 vad = webrtcvad.Vad()
