@@ -373,10 +373,10 @@ def transcribe_streaming(responses, client_socket):
         logging.info('Translated Text: %s', translated_text)
         
         # Send the translated text back to the client
-        # try:
-        #     client_socket.sendall(translated_text.encode('utf-8'))
-        # except socket.error as e:
-        #     logging.error('Error sending data: %s', e)
+        try:
+            client_socket.sendall(translated_text.encode('utf-8'))
+        except socket.error as e:
+            logging.error('Error sending data: %s', e)
 
 def handle_client(client_socket):
     try:

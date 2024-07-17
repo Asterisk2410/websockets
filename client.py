@@ -109,8 +109,6 @@ try:
     print('Client connected to {}:{}'.format(host_ip, port))
     
     client_socket.settimeout(5.0)
-    print('Socket timeout set to 5 seconds')  # Set socket timeout to 5 seconds
-    print('Speak in 5 4 3 2 1')  # Print countdown before sending data
     while True:
         data = stream.read(CHUNK)
         if not data:
