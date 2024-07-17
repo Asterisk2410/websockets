@@ -80,8 +80,8 @@ stream.stop_stream()
 stream.close()
 audio.terminate()'''
 
-########### Working AUDIO TRANSCRIPTION-TRANSLATION SERVER ###########
-import os
+########### Working AUDIO TRANSCRIPTION-TRANSLATION SERVER ---FREE TRANSLATOR ###########
+'''import os
 import socket
 import pyaudio
 from google.cloud import speech
@@ -169,6 +169,277 @@ print('Socket server listening on {}:{}'.format(host_ip, port))
 
 while True:
     client_socket, addr = server_socket.accept()
-    print('GOT A CONNECTION FROM:', addr)
-    time.sleep(3)
-    handle_client(client_socket)   
+    print('Waiting for connection...')
+    if client_socket:
+        print('GOT A CONNECTION FROM:', addr)
+        time.sleep(2)
+        handle_client(client_socket)
+'''
+
+########### Working AUDIO TRANSCRIPTION-TRANSLATION SERVER ---GOOGLE CLOUD TRANSLATOR ###########
+'''import os
+import socket
+import pyaudio
+import webrtcvad
+from google.cloud import speech
+from google.cloud import translate_v2 as translator
+# from googletrans import Translator
+from google.api_core import exceptions
+import logging
+
+# Set the environment variable for Google Cloud credentials
+os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'speech_to_text_cred.json'
+
+# Configure logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s [%(levelname)s] %(message)s')
+
+# Audio parameters
+CHUNK = 1024  # Must be a multiple of 320 for 20ms frames at 16kHz
+FORMAT = pyaudio.paInt16
+CHANNELS = 1
+RATE = 16000
+
+# Initialize pyaudio
+audio = pyaudio.PyAudio()
+
+# Initialize Google Cloud Speech client
+client = speech.SpeechClient()
+
+# Initialize Google Translate client
+translate = translator.Client()
+
+# Initialize VAD
+vad = webrtcvad.Vad()
+vad.set_mode(1)  # Set aggressiveness level (0-3). Higher value means more aggressive.
+
+def is_speech(data):
+    """ Use VAD to check if the audio data contains speech. """
+    return vad.is_speech(data, RATE)
+
+def transcribe_streaming(responses, client_socket):
+    for response in responses:
+        if not response.results:
+            continue
+
+        result = response.results[0]
+        if not result.alternatives:
+            continue
+
+        transcript = result.alternatives[0].transcript
+        
+        # Translate transcript to French
+        translated_text = translate.translate(transcript, src='en', dest='fr').text
+        logging.info('Transcript: %s', transcript)
+        print('Transcript:', transcript)
+        print('Translated Text:', translated_text)
+        logging.info('Translated Text: %s', translated_text)
+        
+        # Send the translated text back to the client
+        # try:
+        #     client_socket.sendall(translated_text.encode('utf-8'))
+        # except socket.error as e:
+        #     logging.error('Error sending data: %s', e)
+
+def handle_client(client_socket):
+    try:
+        config = speech.RecognitionConfig(
+            encoding=speech.RecognitionConfig.AudioEncoding.LINEAR16,
+            sample_rate_hertz=RATE,
+            language_code="en-US",
+        )
+        streaming_config = speech.StreamingRecognitionConfig(
+            config=config,
+            interim_results=True
+        )
+
+        def generate_requests():
+            buffer = b''
+            while True:
+                try:
+                    data = client_socket.recv(CHUNK)
+                    if not data:
+                        logging.info("No data received, breaking loop.")
+                        break
+                    buffer += data
+                    while len(buffer) >= 320:  # Process frames of 20ms (320 bytes)
+                        frame = buffer[:320]
+                        buffer = buffer[320:]
+                        if is_speech(frame):
+                            yield speech.StreamingRecognizeRequest(audio_content=frame)
+                        else:
+                            logging.info("Silence detected, waiting for speech...")
+                except ConnectionAbortedError as e:
+                    logging.error('Connection aborted: %s', e)
+                    break
+                except socket.error as e:
+                    logging.error('Socket error during recv: %s', e)
+                    break
+                except Exception as e:
+                    logging.error('Unexpected error during data recv: %s', e)
+                    break
+
+        responses = client.streaming_recognize(streaming_config, generate_requests())
+        transcribe_streaming(responses, client_socket)
+
+    except socket.error as e:
+        logging.error('Socket error: %s', e)
+    except exceptions.OutOfRange as e:
+        logging.error('Audio Timeout Error: %s', e)
+    except exceptions.Unknown as e:
+        logging.error('Unknown error: %s', e)
+    finally:
+        client_socket.close()
+        logging.info('Client socket closed')
+
+server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+host_ip = '127.0.0.1'
+port = 4892
+backlog = 5
+socket_address = (host_ip, port)
+
+server_socket.bind(socket_address)
+server_socket.listen(backlog)
+logging.info('Socket server listening on %s:%s', host_ip, port)
+
+while True:
+    client_socket, addr = server_socket.accept()
+    if client_socket:
+        logging.info('GOT A CONNECTION FROM: %s', addr)
+        handle_client(client_socket)
+'''
+
+########### Working AUDIO TRANSCRIPTION-TRANSLATION SERVER ---DEEPL TRANSLATOR ###########
+import os
+import socket
+import pyaudio
+import webrtcvad
+import deepl
+from google.cloud import speech
+# from google.cloud import translate_v2 as translator
+# from googletrans import Translator
+from google.api_core import exceptions
+from dotenv import load_dotenv
+import logging
+
+# Set the environment variable for Google Cloud credentials
+load_dotenv()
+os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'speech_to_text_cred.json'
+deep_api_key = os.getenv('DEEPL_API_KEY') 
+
+# Configure logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s [%(levelname)s] %(message)s')
+
+# Audio parameters
+CHUNK = 1024  # Must be a multiple of 320 for 20ms frames at 16kHz
+FORMAT = pyaudio.paInt16
+CHANNELS = 1
+RATE = 16000
+
+# Initialize pyaudio
+audio = pyaudio.PyAudio()
+
+# Initialize Google Cloud Speech client
+client = speech.SpeechClient()
+
+# Initialize Google Translate client
+# translate = translator.Client()
+translate = deepl.Translator(deep_api_key)
+
+# Initialize VAD
+vad = webrtcvad.Vad()
+vad.set_mode(1)  # Set aggressiveness level (0-3). Higher value means more aggressive.
+
+def is_speech(data):
+    """ Use VAD to check if the audio data contains speech. """
+    return vad.is_speech(data, RATE)
+
+def transcribe_streaming(responses, client_socket):
+    for response in responses:
+        if not response.results:
+            continue
+
+        result = response.results[0]
+        if not result.alternatives:
+            continue
+
+        transcript = result.alternatives[0].transcript
+        
+        # Translate transcript to French
+        translated_text = translate.translate_text(transcript, src='en', dest='fr').text
+        logging.info('Transcript: %s', transcript)
+        print('Transcript:', transcript)
+        print('Translated Text:', translated_text)
+        logging.info('Translated Text: %s', translated_text)
+        
+        # Send the translated text back to the client
+        # try:
+        #     client_socket.sendall(translated_text.encode('utf-8'))
+        # except socket.error as e:
+        #     logging.error('Error sending data: %s', e)
+
+def handle_client(client_socket):
+    try:
+        config = speech.RecognitionConfig(
+            encoding=speech.RecognitionConfig.AudioEncoding.LINEAR16,
+            sample_rate_hertz=RATE,
+            language_code="en-US",
+        )
+        streaming_config = speech.StreamingRecognitionConfig(
+            config=config,
+            interim_results=True
+        )
+
+        def generate_requests():
+            buffer = b''
+            while True:
+                try:
+                    data = client_socket.recv(CHUNK)
+                    if not data:
+                        logging.info("No data received, breaking loop.")
+                        break
+                    buffer += data
+                    while len(buffer) >= 320:  # Process frames of 20ms (320 bytes)
+                        frame = buffer[:320]
+                        buffer = buffer[320:]
+                        if is_speech(frame):
+                            yield speech.StreamingRecognizeRequest(audio_content=frame)
+                        else:
+                            logging.info("Silence detected, waiting for speech...")
+                except ConnectionAbortedError as e:
+                    logging.error('Connection aborted: %s', e)
+                    break
+                except socket.error as e:
+                    logging.error('Socket error during recv: %s', e)
+                    break
+                except Exception as e:
+                    logging.error('Unexpected error during data recv: %s', e)
+                    break
+
+        responses = client.streaming_recognize(streaming_config, generate_requests())
+        transcribe_streaming(responses, client_socket)
+
+    except socket.error as e:
+        logging.error('Socket error: %s', e)
+    except exceptions.OutOfRange as e:
+        logging.error('Audio Timeout Error: %s', e)
+    except exceptions.Unknown as e:
+        logging.error('Unknown error: %s', e)
+    finally:
+        client_socket.close()
+        logging.info('Client socket closed')
+
+server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+host_ip = '127.0.0.1'
+port = 4892
+backlog = 5
+socket_address = (host_ip, port)
+
+server_socket.bind(socket_address)
+server_socket.listen(backlog)
+logging.info('Socket server listening on %s:%s', host_ip, port)
+
+while True:
+    client_socket, addr = server_socket.accept()
+    if client_socket:
+        logging.info('GOT A CONNECTION FROM: %s', addr)
+        handle_client(client_socket)
