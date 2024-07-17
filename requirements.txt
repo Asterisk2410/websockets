@@ -1,6 +1,12 @@
-pyshine
 sockets
 Flask
 gevent-websocket
 flask_sockets
 openai-whisper
+webrtcvad
+pyaudio
+google-cloud-speech
+google-api-core
+google-api-python-client
+googletrans
+deepl
