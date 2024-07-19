@@ -313,7 +313,7 @@ import os
 import socket
 import pyaudio
 import webrtcvad
-import deepl
+import deepl  ## library for speech translation
 from google.cloud import speech
 # from google.cloud import translate_v2 as translator
 # from googletrans import Translator
