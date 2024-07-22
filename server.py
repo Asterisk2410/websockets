@@ -463,12 +463,13 @@ def transcribe_streaming(responses, client_socket):
         
         # Translate transcript to French
         translated_text = translator.translate_text(transcript, source_lang='EN', target_lang='FR')
+        translated_text_str = translated_text.text
         print('Transcript:', transcript)
-        print('Translated Text:', translated_text.text)
+        print('Translated Text:', translated_text_str)
         
         # Send the translated text back to the client
         try:
-            client_socket.sendall(translated_text.encode('utf-8'))
+            client_socket.sendall(translated_text_str.encode('utf-8'))
         except socket.error as e:
             logging.error('Error sending data: %s', e)
 
