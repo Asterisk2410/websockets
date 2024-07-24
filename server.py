@@ -418,7 +418,6 @@ while True:
         handle_client(client_socket)'''
         
 import os
-import time
 import socket
 import pyaudio
 import deepl  # Library for translation
@@ -461,24 +460,35 @@ def transcribe_streaming(responses, client_socket):
 
         transcript = result.alternatives[0].transcript
         
-        # Translate transcript to French
-        translated_text = translator.translate_text(transcript, source_lang='EN', target_lang='FR')
-        translated_text_str = translated_text.text
-        print('Transcript:', transcript)
-        print('Translated Text:', translated_text_str)
-        
-        # Send the translated text back to the client
-        try:
-            client_socket.sendall(translated_text_str.encode('utf-8'))
-        except socket.error as e:
-            logging.error('Error sending data: %s', e)
+        if transcript:
+            print('Transcript:', transcript)
+            try:
+                # Translate transcript to French
+                translated_text = translator.translate_text(transcript, source_lang='EN', target_lang='FR')
+                translated_text_str = translated_text.text
+                # print('Transcript:', transcript)
+                logging.info('Translated Text: %s', translated_text_str)
 
+                # Send the translated text back to the client    
+                client_socket.sendall(translated_text_str.encode('utf-8'))
+            except ValueError as e:
+                logging.error('Error translating transcript: %s', e)
+            except socket.error as e:
+                logging.error('Error sending data: %s', e)
+        
 def audio_generator(client_socket):
-    while True:
-        data = client_socket.recv(CHUNK)
-        if not data:
-            break
-        yield speech.StreamingRecognizeRequest(audio_content=data)
+    try:
+        while True:
+            data = client_socket.recv(CHUNK)
+            if not data:
+                break
+            yield speech.StreamingRecognizeRequest(audio_content=data)
+    except ConnectionAbortedError:
+        logging.error("Connection aborted by the client")
+    except Exception as e:
+        logging.error("Error in audio generator: %s", e)
+    finally:
+        client_socket.close()
 
 def handle_client(client_socket):
     try:

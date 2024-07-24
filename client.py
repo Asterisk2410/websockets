@@ -340,7 +340,8 @@ try:
     client_socket.connect(socket_address)
     print('Client connected to {}:{}'.format(host_ip, port))
     
-    client_socket.settimeout(2.0)  # Increase timeout if needed
+    client_socket.settimeout(2.0)
+    # Increase timeout if needed
     
     # Start a thread to receive data from the server
     receive_thread = threading.Thread(target=receive_data, args=(client_socket,))

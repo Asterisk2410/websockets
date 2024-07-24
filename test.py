@@ -1,5 +1,4 @@
 import os
-import time
 import socket
 import pyaudio
 import deepl  # Library for translation
@@ -44,19 +43,19 @@ def transcribe_streaming(responses, client_socket):
         
         if transcript:
             print('Transcript:', transcript)
-        try:
-            # Translate transcript to French
-            translated_text = translator.translate_text(transcript, source_lang='EN', target_lang='FR')
-            translated_text_str = translated_text.text
-            # print('Transcript:', transcript)
-            print('Translated Text:', translated_text_str)
+            try:
+                # Translate transcript to French
+                translated_text = translator.translate_text(transcript, source_lang='EN', target_lang='FR')
+                translated_text_str = translated_text.text
+                # print('Transcript:', transcript)
+                logging.info('Translated Text: %s', translated_text_str)
 
-            # Send the translated text back to the client    
-            client_socket.sendall(translated_text_str.encode('utf-8'))
-        except ValueError as e:
-            logging.error('Error translating transcript: %s', e)
-        except socket.error as e:
-            logging.error('Error sending data: %s', e)
+                # Send the translated text back to the client    
+                client_socket.sendall(translated_text_str.encode('utf-8'))
+            except ValueError as e:
+                logging.error('Error translating transcript: %s', e)
+            except socket.error as e:
+                logging.error('Error sending data: %s', e)
         
 def audio_generator(client_socket):
     try:
@@ -161,7 +160,7 @@ try:
     client_socket.connect(socket_address)
     print('Client connected to {}:{}'.format(host_ip, port))
     
-    client_socket.settimeout(10.0)  # Increase timeout if needed
+    client_socket.settimeout( .0)  # Increase timeout if needed
     
     # Start a thread to receive data from the server
     receive_thread = threading.Thread(target=receive_data, args=(client_socket,))
