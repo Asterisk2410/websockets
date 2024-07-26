@@ -109,7 +109,7 @@ audio = pyaudio.PyAudio()
 client = speech.SpeechClient()
 
 # Initialize Google Cloud Translate client
-translate = Translator()
+translate = Translator(service_urls=['translate.googleapis.com'])
 
 def transcribe_streaming(responses, client_socket):
     for response in responses:
@@ -419,6 +419,7 @@ while True:
         
 import os
 import socket
+import sys
 import pyaudio
 import deepl  # Library for translation
 from google.cloud import speech
@@ -440,6 +441,10 @@ FORMAT = pyaudio.paInt16
 CHANNELS = 1
 RATE = 16000
 
+RED = "\033[0;31m"
+GREEN = "\033[0;32m"
+YELLOW = "\033[0;33m"
+
 # Initialize pyaudio
 audio = pyaudio.PyAudio()
 
@@ -457,20 +462,27 @@ def transcribe_streaming(responses, client_socket):
         result = response.results[0]
         if not result.alternatives:
             continue
-
+        
+        # if result.is_final:
+        #     logging.info('Result: %s', result)
         transcript = result.alternatives[0].transcript
         
         if transcript:
-            print('Transcript:', transcript)
+            sys.stdout.write(YELLOW)
+            sys.stdout.write("\033[K")
+            sys.stdout.write('Transcript:' + transcript + '\n')
             try:
                 # Translate transcript to French
                 translated_text = translator.translate_text(transcript, source_lang='EN', target_lang='FR')
                 translated_text_str = translated_text.text
                 # print('Transcript:', transcript)
-                logging.info('Translated Text: %s', translated_text_str)
+                sys.stdout.write(GREEN)
+                sys.stdout.write("\033[K")
+                sys.stdout.write('Translated Text:' + translated_text_str + '\n')
 
-                # Send the translated text back to the client    
-                client_socket.sendall(translated_text_str.encode('utf-8'))
+                if result.is_final:
+                    # Send the translated text back to the client    
+                    client_socket.sendall(translated_text_str.encode('utf-8'))
             except ValueError as e:
                 logging.error('Error translating transcript: %s', e)
             except socket.error as e:
