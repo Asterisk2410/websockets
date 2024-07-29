@@ -437,7 +437,6 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s [%(levelname)s] %(me
 
 # Audio parameters
 CHUNK = 1024
-FORMAT = pyaudio.paInt16
 CHANNELS = 1
 RATE = 16000
 

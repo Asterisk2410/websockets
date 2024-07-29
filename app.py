@@ -51,14 +51,15 @@ def handle_audio_data(data):
                         transcript = result.alternatives[0].transcript
                         logging.info('Transcript: %s', transcript)
 
-                        # Translate the transcript
-                        translation = translator.translate(transcript, dest='fr')
-                        translated_text = translation.text
-                        print('Translation:', translated_text)
-                        logging.info('Translation: %s', translated_text)
-                        print('sending')
-                        # Send translated text back to the client
-                        socketio.emit('translated_text', translated_text)
+                        if transcript:
+                            # Translate the transcript
+                            translation = translator.translate(transcript, dest='fr')
+                            translated_text = translation.text
+                            print('Translation:', translated_text)
+                            logging.info('Translation: %s', translated_text)
+                            print('sending')
+                            # Send translated text back to the client
+                            socketio.emit('translated_text', translated_text)
             else:
                 print("No audio data received.")
                 socketio.emit('error', {'message': 'No audio data received.'})
